@@ -26,6 +26,7 @@ public class main {
             inicializarJugadores();
             // Iniciamos la funcion que nos muestra el menu de opciones
             mostrarMenu();
+
         }
 
         // Agregamos la funcion agregarjugador para aldir los jugadores dentro de esta
