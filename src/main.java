@@ -4,6 +4,7 @@ import java.util.Scanner;
 public class main {
 
 
+
         static Scanner lectura = new Scanner(System.in);
         static ArrayList<String> jugadoresDisponibles = new ArrayList<>();
         static ArrayList<Float> preciosDisponibles = new ArrayList<>();
