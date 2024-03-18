@@ -3,9 +3,6 @@ import java.util.Scanner;
 
 public class main {
 
-    // Programa este mismo programa pero con objetos y archvivos y carpeta
-
-
 
         static Scanner lectura = new Scanner(System.in);
         static ArrayList<String> jugadoresDisponibles = new ArrayList<>();
