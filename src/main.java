@@ -1,9 +1,10 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class main {
-
-
 
         static Scanner lectura = new Scanner(System.in);
         static ArrayList<String> jugadoresDisponibles = new ArrayList<>();
@@ -20,6 +21,8 @@ public class main {
                     + "██║     ██║  ██║██║ ╚████║   ██║   ██║  ██║███████║   ██║   \r\n"
                     + "╚═╝     ╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝╚══════╝   ╚═╝   \r\n"
                     + "                                                            \r\n" + "");
+
+            cargarJugadoresFichados();
             // Iniciamos la funcion de los jugadores disponibles
             inicializarJugadores();
             // Iniciamos la funcion que nos muestra el menu de opciones
@@ -82,6 +85,14 @@ public class main {
                 }
             } while (opcion != 0);
         }
+
+    private static void cargarJugadoresFichados() {
+        jugadoresFichados = GestorArchivosJugadores.cargarJugadoresDesdeArchivo("jugadores.obj");
+    }
+
+    private static void guardarJugadoresFichados() {
+        GestorArchivosJugadores.guardarJugadoresEnArchivo(jugadoresFichados, "jugadores.obj");
+    }
 
         // Funcion para mostrar los jugadores por posiciones y presupuesto
         private static void mostrarJugadoresDisponibles() {
@@ -152,50 +163,52 @@ public class main {
 
         // Funcion para fichar jugadores
         private static void ficharJugador() {
-            int seleccion;
-            String jugadorSeleccionado;
-            float precioJugador;
-            int nJugadoresFichados = jugadoresFichados.size();
+        int seleccion;
+        String jugadorSeleccionado = null;
+        float precioJugador = 0;
+        int nJugadoresFichados = jugadoresFichados.size();
 
-            // Verifica si hay hueco en la plantilla ya que tenemos que maximo ocho
-            // jugadores
-            if (nJugadoresFichados < 8) {
-                mostrarJugadoresDisponibles();
-                System.out.print("Seleccione un jugador para fichar (0 para cancelar): ");
-                seleccion = lectura.nextInt();
+        // Verifica si hay hueco en la plantilla ya que tenemos que maximo ocho
+        // jugadores
+        if (nJugadoresFichados < 8) {
+            mostrarJugadoresDisponibles();
+            System.out.print("Seleccione un jugador para fichar (0 para cancelar): ");
+            seleccion = lectura.nextInt();
 
-                if (seleccion >= 1 && seleccion <= jugadoresDisponibles.size()) {
-                    jugadorSeleccionado = jugadoresDisponibles.remove(seleccion - 1);
-                    precioJugador = preciosDisponibles.remove(seleccion - 1);
 
-                    // Verificamos si tienes el presupuesto para fichar los jugadores disponibles
-                    if (presupuesto >= precioJugador) {
-                        jugadoresFichados.add(jugadorSeleccionado);
-                        preciosFichados.add(precioJugador);
-                        presupuesto -= precioJugador;
-                        System.out.println("-----------------------------------");
-                        System.out.println("Fichaste a " + jugadorSeleccionado + " por " + precioJugador
-                                + ". Presupuesto restante: " + presupuesto);
-                    } else {
-                        System.out.println("No tienes presupuesto suficiente para fichar a este jugador.");
-                    }
-                } else if (seleccion != 0) {
-                    System.out.println("Selección inválida.");
-                }
-            } else {
-                // Verificamos si la palntilla tiene 8 jugadores y si de esos ocho hay uno por
-                // posicion
-                if (!validarPlantilla()) {
+            if (seleccion >= 1 && seleccion <= jugadoresDisponibles.size()) {
+                jugadorSeleccionado = jugadoresDisponibles.remove(seleccion - 1);
+                precioJugador = preciosDisponibles.remove(seleccion - 1);
+
+                // Verificamos si tienes el presupuesto para fichar los jugadores disponibles
+                if (presupuesto >= precioJugador) {
+                    jugadoresFichados.add(jugadorSeleccionado);
+                    preciosFichados.add(precioJugador);
+                    presupuesto -= precioJugador;
                     System.out.println("-----------------------------------");
-                    System.out.println(
-                            "⚠️ La plantilla no es válida. Debes tener al menos un jugador por posición. Elimina alguno y termina de fichar las posiciones que te faltan.");
-                } else if (nJugadoresFichados == 8) {
-                    System.out.println("-----------------------------------");
-                    System.out.println(" ✔️ Plantilla completada, tienes ocho jugadores no puedes fichar mas");
-                    mostrarMenu();
+                    System.out.println("Fichaste a " + jugadorSeleccionado + " por " + precioJugador
+                            + ". Presupuesto restante: " + presupuesto);
+                } else {
+                    System.out.println("No tienes presupuesto suficiente para fichar a este jugador.");
                 }
+            } else if (seleccion != 0) {
+                System.out.println("Selección inválida.");
+            }
+        } else {
+            // Verificamos si la palntilla tiene 8 jugadores y si de esos ocho hay uno por
+            // posicion
+            if (!validarPlantilla()) {
+                System.out.println("-----------------------------------");
+                System.out.println(
+                        "⚠️ La plantilla no es válida. Debes tener al menos un jugador por posición. Elimina alguno y termina de fichar las posiciones que te faltan.");
+            } else if (nJugadoresFichados == 8) {
+                System.out.println("-----------------------------------");
+                System.out.println(" ✔️ Plantilla completada, tienes ocho jugadores no puedes fichar mas");
+                mostrarMenu();
             }
         }
+
+    }
 
         // Aqui verificamos si la palntilla cumple con la condicion de 1 jugador por
         // cada 5 de las posiciones
@@ -249,5 +262,11 @@ public class main {
             jugadoresDisponibles.add(nombre);
             preciosDisponibles.add((float) precio);
         }
+
+    @Override
+    protected void finalize() throws Throwable {
+        guardarJugadoresFichados();
+        super.finalize();
+    }
     }
 
