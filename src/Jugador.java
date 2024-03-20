@@ -1,10 +1,10 @@
 import java.io.Serializable;
 
-public class Jugador implements Serializable {
+public class Jugador implements Serializable{
     private String nombre;
-    private double precio;
+    private float precio;
 
-    public Jugador(String nombre, double precio) {
+    public Jugador(String nombre, float precio) {
         this.nombre = nombre;
         this.precio = precio;
     }
@@ -13,13 +13,7 @@ public class Jugador implements Serializable {
         return nombre;
     }
 
-    public double getPrecio() {
+    public float getPrecio() {
         return precio;
     }
-
-    @Override
-    public String toString() {
-        return nombre + " - " + precio;
-    }
 }
-

@@ -1,8 +1,6 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class main {
 
@@ -12,6 +10,7 @@ public class main {
         static ArrayList<Float> preciosDisponibles = new ArrayList<>();
         static ArrayList<Float> preciosFichados = new ArrayList<>();
         static float presupuesto = 1000;
+        static String archivoJugadoresFichados = "jugadores_fichados.obj";
 
         public static void main(String[] args) {
             System.out.println("\r\n" + "███████╗ █████╗ ███╗   ██╗████████╗ █████╗ ███████╗██╗   ██╗\r\n"
@@ -22,9 +21,13 @@ public class main {
                     + "╚═╝     ╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝╚══════╝   ╚═╝   \r\n"
                     + "                                                            \r\n" + "");
 
+            cargarJugadoresFichadosDesdeArchivo();
+
             inicializarJugadores();
 
             mostrarMenu();
+
+            guardarJugadoresFichadosEnArchivo();
 
         }
 
@@ -105,8 +108,8 @@ public class main {
                 for (int i = 0; i < jugadoresDisponibles.size(); i++) {
                     jugador = jugadoresDisponibles.get(i);
                     precio = preciosDisponibles.get(i);
-
-                    if (cumplePresupuesto(precio) && cumplePosicion(jugador, posicion)) {
+                    // Verificar si el jugador no está en la lista de jugadores fichados
+                    if (!jugadoresFichados.contains(jugador) && cumplePresupuesto(precio) && cumplePosicion(jugador, posicion)) {
                         System.out.println((i + 1) + ". 🏀​​ " + jugador + " - " + precio);
                     }
                 }
@@ -218,33 +221,69 @@ public class main {
         }
 
 
-        private static void eliminarJugador() {
-            // Mostramos la funcion de la plantilla
-            mostrarPlantilla();
-            String jugadorEliminado;
-            float precioEliminado;
-            System.out.print("Seleccione un jugador para eliminar (0 para cancelar): ");
-            int seleccion = lectura.nextInt();
-            // Esto lo usamos para verificar el jugador
-            if (seleccion >= 1 && seleccion <= jugadoresFichados.size()) {
-                // Se elimina y nos devuelve el precio del jugador al presupuesto
-                jugadorEliminado = jugadoresFichados.remove(seleccion - 1);
-                precioEliminado = preciosFichados.remove(seleccion - 1);
+    private static void eliminarJugador() {
+        // Mostramos la funcion de la plantilla
+        mostrarPlantilla();
+        System.out.print("Seleccione un jugador para eliminar (0 para cancelar): ");
+        int seleccion = lectura.nextInt();
+
+        if (seleccion >= 1 && seleccion <= jugadoresFichados.size()) {
+            String jugadorEliminado = jugadoresFichados.remove(seleccion - 1);
+            float precioEliminado = preciosFichados.remove(seleccion - 1);
+            // Verificar si el jugador eliminado ya está en la lista de jugadores disponibles
+            if (!jugadoresDisponibles.contains(jugadorEliminado)) {
                 jugadoresDisponibles.add(jugadorEliminado);
                 preciosDisponibles.add(precioEliminado);
-                presupuesto += precioEliminado;
-                System.out.println("-----------------------------------");
-                System.out.println(
-                        "Eliminaste a " + jugadorEliminado + " de tu plantilla. Presupuesto restante: " + presupuesto);
-            } else if (seleccion != 0) {
-                System.out.println("Selección inválida.");
             }
+            presupuesto += precioEliminado;
+            System.out.println("-----------------------------------");
+            System.out.println("Eliminaste a " + jugadorEliminado + " de tu plantilla. Presupuesto restante: " + presupuesto);
+        } else if (seleccion != 0) {
+            System.out.println("Selección inválida.");
         }
+    }
 
 
-        private static void agregarJugador(String nombre, double precio) {
-            jugadoresDisponibles.add(nombre);
-            preciosDisponibles.add((float) precio);
+    private static void agregarJugador(String nombre, double precio) {
+        jugadoresDisponibles.add(nombre);
+        preciosDisponibles.add((float) precio);
+    }
+
+    //Funcion para cargar rl archivo.obj que tenemos guardado y pasarlo a mi lista.
+    private static void cargarJugadoresFichadosDesdeArchivo() {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(archivoJugadoresFichados);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+            jugadoresFichados = (ArrayList<String>) objectInputStream.readObject();
+            preciosFichados = (ArrayList<Float>) objectInputStream.readObject();
+            presupuesto = objectInputStream.readFloat();
+
+            objectInputStream.close();
+            fileInputStream.close();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("No se pudo cargar el archivo de jugadores fichados.");
         }
+    }
+
+    //Funcion para cuando finaliza el programa que se me guarde en el archivo.obj.
+
+    private static void guardarJugadoresFichadosEnArchivo() {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(archivoJugadoresFichados);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+            objectOutputStream.writeObject(jugadoresFichados);
+            objectOutputStream.writeObject(preciosFichados);
+            objectOutputStream.writeFloat(presupuesto);
+
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            System.out.println("No se pudo guardar el archivo de jugadores fichados.");
+        }
+    }
+
+
 
 }
