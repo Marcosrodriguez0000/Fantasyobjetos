@@ -8,8 +8,8 @@ public class main {
 
         static Scanner lectura = new Scanner(System.in);
         static ArrayList<String> jugadoresDisponibles = new ArrayList<>();
-        static ArrayList<Float> preciosDisponibles = new ArrayList<>();
         static ArrayList<String> jugadoresFichados = new ArrayList<>();
+        static ArrayList<Float> preciosDisponibles = new ArrayList<>();
         static ArrayList<Float> preciosFichados = new ArrayList<>();
         static float presupuesto = 1000;
 
@@ -22,16 +22,13 @@ public class main {
                     + "╚═╝     ╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝╚══════╝   ╚═╝   \r\n"
                     + "                                                            \r\n" + "");
 
-            cargarJugadoresFichados();
-            // Iniciamos la funcion de los jugadores disponibles
             inicializarJugadores();
-            // Iniciamos la funcion que nos muestra el menu de opciones
+
             mostrarMenu();
 
         }
 
-        // Agregamos la funcion agregarjugador para aldir los jugadores dentro de esta
-        // para inciarlos
+
         private static void inicializarJugadores() {
             agregarJugador("BA-Luka Doncic", 300.0);
             agregarJugador("BA-Stephen Curry", 100.0);
@@ -58,7 +55,6 @@ public class main {
 
         private static void mostrarMenu() {
             int opcion;
-            // Iniciamos un bucle para que muestre el menu de opciones y la opcion elegida
             do {
                 System.out.println("----------- MENU DE OPCIONES DE MERCADO -----------");
                 System.out.println("1. Mostrar jugadores disponibles");
@@ -86,15 +82,7 @@ public class main {
             } while (opcion != 0);
         }
 
-    private static void cargarJugadoresFichados() {
-        jugadoresFichados = GestorArchivosJugadores.cargarJugadoresDesdeArchivo("jugadores.obj");
-    }
 
-    private static void guardarJugadoresFichados() {
-        GestorArchivosJugadores.guardarJugadoresEnArchivo(jugadoresFichados, "jugadores.obj");
-    }
-
-        // Funcion para mostrar los jugadores por posiciones y presupuesto
         private static void mostrarJugadoresDisponibles() {
 
             int posicion;
@@ -127,13 +115,12 @@ public class main {
             }
         }
 
-        // Los usamos para verificar presupuesto y posicion
+
         private static boolean cumplePresupuesto(float precio) {
             return presupuesto >= precio;
         }
 
-        // Verificamos si el jugador cumple con la posicion y asi ver si hay minimo uno
-        // por posicion
+
         private static boolean cumplePosicion(String jugador, int posicion) {
             switch (posicion) {
                 case 1:
@@ -151,8 +138,7 @@ public class main {
             }
         }
 
-        // Guardamos mis jugadores en una plantilla donde cuando damos a la opcion nos
-        // va a mostrar los jugadores elegidos
+
         private static void mostrarPlantilla() {
             System.out.println("-----------------------------------");
             System.out.println("Tu plantilla:");
@@ -161,7 +147,7 @@ public class main {
             }
         }
 
-        // Funcion para fichar jugadores
+
         private static void ficharJugador() {
         int seleccion;
         String jugadorSeleccionado = null;
@@ -210,8 +196,7 @@ public class main {
 
     }
 
-        // Aqui verificamos si la palntilla cumple con la condicion de 1 jugador por
-        // cada 5 de las posiciones
+
         private static boolean validarPlantilla() {
             // Bucle para la posicion de 1 a 5
             for (int posicion = 1; posicion <= 5; posicion++) {
@@ -232,7 +217,7 @@ public class main {
             return true;
         }
 
-        // Usamos esta funcion para eliminar un jugador de mi plantilla
+
         private static void eliminarJugador() {
             // Mostramos la funcion de la plantilla
             mostrarPlantilla();
@@ -256,17 +241,10 @@ public class main {
             }
         }
 
-        // Con esto lo usamos para el principio que hemos añadido todas los jugadores,
-        // pues funcion para agregarlos
+
         private static void agregarJugador(String nombre, double precio) {
             jugadoresDisponibles.add(nombre);
             preciosDisponibles.add((float) precio);
         }
 
-    @Override
-    protected void finalize() throws Throwable {
-        guardarJugadoresFichados();
-        super.finalize();
-    }
-    }
-
+}
